@@ -198,7 +198,7 @@ class SettingsView extends GetView<SettingsController> {
                           borderRadius: BorderRadius.circular(4),
                           child: Image.network(
                             film['posterUrl'],
-                            width: 40,
+                            width: 50,
                             height: 60,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) => Container(
