@@ -40,7 +40,7 @@ class SplashController extends GetxController {
       opacity.value -= 0.1;
     }
     
-    // Navigasi ke halaman berikutnya (Anda perlu menentukan rute)
-    Get.offNamed('/home'); // Ganti dengan rute yang sesuai
+    // Navigasi ke halaman login setelah splash screen
+    Get.offNamed('/login'); // Mengarahkan ke halaman login
   }
 }

@@ -24,4 +24,30 @@ class JelajahiController extends GetxController {
   }
 
   void increment() => count.value++;
+
+  // Method untuk navigasi ke halaman kategori dengan parameter
+  void navigateToCategory(String categoryName) {
+    Get.toNamed('/kategori', arguments: {'category': categoryName});
+  }
+
+  // Method untuk navigasi ke halaman detail buku
+  void navigateToBookDetail({
+    required String title,
+    required String author,
+    required String coverImage,
+    String? description,
+    String? pageCount,
+    String? publishDate,
+    String? ageRating,
+  }) {
+    Get.toNamed('/detail', arguments: {
+      'title': title,
+      'author': author,
+      'coverImage': coverImage,
+      'description': description,
+      'pageCount': pageCount ?? '200',
+      'publishDate': publishDate ?? '2023',
+      'ageRating': ageRating ?? '13+',
+    });
+  }
 }

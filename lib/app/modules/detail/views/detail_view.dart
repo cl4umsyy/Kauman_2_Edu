@@ -162,80 +162,54 @@ class DetailView extends GetView<DetailController> {
                   Row(
                     children: [
                       Expanded(
-                        child: _buildInfoCard(
+                        child: Obx(() => _buildInfoCard(
                           icon: Icons.calendar_today,
                           title: "Published",
                           value: controller.publishDate.value,
-                        ),
+                        )),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: _buildInfoCard(
+                        child: Obx(() => _buildInfoCard(
                           icon: Icons.menu_book,
                           title: "Pages",
                           value: controller.pageCount.value.toString(),
-                        ),
+                        )),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: _buildInfoCard(
+                        child: Obx(() => _buildInfoCard(
                           icon: Icons.person_outline,
                           title: "Age Rating",
                           value: controller.ageRating.value,
-                        ),
+                        )),
                       ),
                     ],
                   ),
                   
                   const SizedBox(height: 24),
                   
-                  // Action buttons
-                  Row(
-                    children: [
-                      // Read PDF Button
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            // Open PDF viewer
-                            Get.toNamed('/pdf-viewer');
-                          },
-                          icon: const Icon(Icons.picture_as_pdf),
-                          label: const Text("Read PDF"),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue[800],
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
+                  // Download Button
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      // Download logic
+                      Get.snackbar(
+                        "Downloading",
+                        "Starting download...",
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
+                    },
+                    icon: const Icon(Icons.download),
+                    label: const Text("Download"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF00B14F),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      minimumSize: const Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      const SizedBox(width: 16),
-                      // Download Button
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            // Download logic
-                            Get.snackbar(
-                              "Downloading",
-                              "Starting download...",
-                              snackPosition: SnackPosition.BOTTOM,
-                            );
-                          },
-                          icon: const Icon(Icons.download),
-                          label: const Text("Download"),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.blue[800],
-                            side: BorderSide(color: Colors.blue[800]!),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                   
                   const SizedBox(height: 24),
@@ -266,10 +240,10 @@ class DetailView extends GetView<DetailController> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () => controller.expandDescription(),
-                      child: Text(
+                      child: const Text(
                         'Read More',
                         style: TextStyle(
-                          color: Colors.blue[700],
+                          color: Color(0xFF00B14F),
                         ),
                       ),
                     ),
@@ -300,8 +274,8 @@ class DetailView extends GetView<DetailController> {
                       ),
                       Text(
                         "See all (254)",
-                        style: TextStyle(
-                          color: Colors.blue[700],
+                        style: const TextStyle(
+                          color: Color(0xFF00B14F),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -356,7 +330,7 @@ class DetailView extends GetView<DetailController> {
         onPressed: () {
           _showReviewDialog(context);
         },
-        backgroundColor: Colors.blue[800],
+        backgroundColor: const Color(0xFF00B14F),
         icon: const Icon(Icons.rate_review, color: Colors.white),
         label: const Text("Write Review", style: TextStyle(color: Colors.white)),
       ),
@@ -379,7 +353,7 @@ class DetailView extends GetView<DetailController> {
       ),
       child: Column(
         children: [
-          Icon(icon, color: Colors.blue[800], size: 24),
+          Icon(icon, color: const Color(0xFF00B14F), size: 24),
           const SizedBox(height: 8),
           Text(
             title,
@@ -423,12 +397,12 @@ class DetailView extends GetView<DetailController> {
           Row(
             children: [
               // Average rating big number
-              Text(
+              const Text(
                 "4.5",
                 style: TextStyle(
                   fontSize: 48,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue[800],
+                  color: Color(0xFF00B14F),
                 ),
               ),
               const SizedBox(width: 16),
@@ -655,7 +629,7 @@ class DetailView extends GetView<DetailController> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.blue[800]!),
+                          borderSide: const BorderSide(color: Color(0xFF00B14F)),
                         ),
                       ),
                     ),
@@ -665,7 +639,7 @@ class DetailView extends GetView<DetailController> {
                       child: ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue[800],
+                          backgroundColor: const Color(0xFF00B14F),
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                           shape: RoundedRectangleBorder(
@@ -762,7 +736,7 @@ class DetailView extends GetView<DetailController> {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue[800],
+              backgroundColor: const Color(0xFF00B14F),
             ),
             child: const Text("Submit"),
           ),

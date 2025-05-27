@@ -1,287 +1,252 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../home/controllers/home_controller.dart';
-import '../../detail/controllers/detail_controller.dart';
+import '../../create_acc/views/create_acc_view.dart';
 
 class LoginController extends GetxController {
-  // Text controllers for all fields
-  final TextEditingController emailController = TextEditingController();
+  // Text Controllers
+  final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
   
-  // Observable variables for form validation
-  final RxBool isEmailValid = true.obs;
-  final RxBool isPasswordValid = true.obs;
-  final RxBool isNameValid = true.obs;
-  final RxBool isConfirmPasswordValid = true.obs;
-  final RxBool isLoading = false.obs;
-  
-  // Page state (login or create account)
-  final RxBool isLoginPage = true.obs;
-  
-  // Password visibility
-  final RxBool showPassword = false.obs;
-  final RxBool showConfirmPassword = false.obs;
-  
-  // Terms agreement for registration
-  final RxBool agreedToTerms = false.obs;
-  
-  // Store arguments passed from book detail
-  var returnToDetail = false;
-  var bookTitle = '';
-  var shouldRedirectToDetail = false;
+  // Observable variables
+  final isLoading = false.obs;
+  final isPasswordHidden = true.obs;
+  final isUsernameFocused = false.obs;
+  final isPasswordFocused = false.obs;
   
   @override
   void onInit() {
     super.onInit();
-    
-    // Get arguments if they exist
-    if (Get.arguments != null) {
-      if (Get.arguments['returnToDetail'] != null) {
-        returnToDetail = Get.arguments['returnToDetail'];
-      }
-      if (Get.arguments['bookTitle'] != null) {
-        bookTitle = Get.arguments['bookTitle'];
-      }
-      if (Get.arguments['shouldRedirectToDetail'] != null) {
-        shouldRedirectToDetail = Get.arguments['shouldRedirectToDetail'];
-      }
-    }
   }
 
+  @override
+  void onReady() {
+    super.onReady();
+  }
 
   @override
   void onClose() {
-    // Clean up controllers
-    emailController.dispose();
+    usernameController.dispose();
     passwordController.dispose();
-    nameController.dispose();
-    confirmPasswordController.dispose();
     super.onClose();
   }
-  
-  // Return to home screen without logging in
-  void returnToHome() {
-    Get.back(); // Navigate back to previous screen (home or detail)
-  }
-  
-  // Toggle between login and create account pages
-  void togglePage() {
-    isLoginPage.value = !isLoginPage.value;
-    
-    // Clear form fields when switching
-    if (isLoginPage.value) {
-      // Clear create account fields
-      nameController.clear();
-      confirmPasswordController.clear();
-      agreedToTerms.value = false;
-    } else {
-      // Clear login fields (optional, depends on your UX preference)
-      // emailController.clear();
-      // passwordController.clear();
-    }
-    
-    // Reset validation states
-    isEmailValid.value = true;
-    isPasswordValid.value = true;
-    isNameValid.value = true;
-    isConfirmPasswordValid.value = true;
-  }
-  
+
   // Toggle password visibility
   void togglePasswordVisibility() {
-    showPassword.value = !showPassword.value;
+    isPasswordHidden.value = !isPasswordHidden.value;
   }
   
-  // Toggle confirm password visibility
-  void toggleConfirmPasswordVisibility() {
-    showConfirmPassword.value = !showConfirmPassword.value;
+  // Set focus states
+  void setUsernameFocus(bool focused) {
+    isUsernameFocused.value = focused;
   }
   
-  // Toggle terms agreement
-  void toggleTermsAgreement() {
-    agreedToTerms.value = !agreedToTerms.value;
+  void setPasswordFocus(bool focused) {
+    isPasswordFocused.value = focused;
   }
   
-  // Modified validation methods to always return true
-  bool validateName(String name) {
-    // Modified to always return true for easier login
+  // Validation dengan pesan Indonesia
+  bool _validateInputs() {
+    if (usernameController.text.trim().isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Username tidak boleh kosong',
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade800,
+        snackPosition: SnackPosition.TOP,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(16),
+        borderRadius: 8,
+      );
+      return false;
+    }
+    
+    if (passwordController.text.trim().isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Password tidak boleh kosong',
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade800,
+        snackPosition: SnackPosition.TOP,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(16),
+        borderRadius: 8,
+      );
+      return false;
+    }
+    
+    if (passwordController.text.length < 6) {
+      Get.snackbar(
+        'Error',
+        'Password minimal 6 karakter',
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade800,
+        snackPosition: SnackPosition.TOP,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(16),
+        borderRadius: 8,
+      );
+      return false;
+    }
+    
     return true;
   }
   
-  bool validateEmail(String email) {
-    // Modified to always return true for easier login
-    return true;
-  }
-  
-  bool validatePassword(String password) {
-    // Modified to always return true for easier login
-    return true;
-  }
-  
-  bool validateConfirmPassword(String password, String confirmPassword) {
-    // Modified to always return true for easier login
-    return true;
-  }
-  
-  // Navigate to detail page and clear navigation history
-  void navigateToDetailPage() {
-    Get.offAllNamed('/detail');
-  }
-  
-  // Handle login process - modified to replace current screen with detail page
+  // Login function
   Future<void> login() async {
-    // Always set validation to true
-    isEmailValid.value = true;
-    isPasswordValid.value = true;
-    
-    // Show loading indicator
-    isLoading.value = true;
+    if (!_validateInputs()) return;
     
     try {
-      // Simulate API call with a shorter delay
-      await Future.delayed(Duration(milliseconds: 500));
+      isLoading.value = true;
       
-      // Always successful login, regardless of credentials
-      final HomeController homeController = Get.find<HomeController>();
-      homeController.setLoggedIn(true);
+      // Simulate API call
+      await Future.delayed(const Duration(seconds: 2));
       
-      // If coming from book detail with specific book info
-      if (returnToDetail) {
-        // Go back to detail screen
-        Get.back();
-        
-        // Show success message with book info
+      String username = usernameController.text.trim();
+      String password = passwordController.text.trim();
+      
+      // Demo validation - sesuaikan dengan kebutuhan
+      if (username.isNotEmpty && password.length >= 6) {
         Get.snackbar(
-          'Success', 
-          'You\'ve successfully logged in! "$bookTitle" has been added to your list.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.withOpacity(0.8),
-          colorText: Colors.white,
-          duration: Duration(seconds: 2),
+          'Berhasil',
+          'Login berhasil! Selamat datang, $username',
+          backgroundColor: Colors.green.shade100,
+          colorText: Colors.green.shade800,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 2),
+          margin: const EdgeInsets.all(16),
+          borderRadius: 8,
         );
-      } 
-      else {
-        // Replace current screen with detail page rather than navigating
-        Get.offAllNamed('/detail');
         
-        // Show success message
+        // Clear text fields after successful login
+        _clearInputs();
+        
+        // Navigate to home page after successful login
+        await Future.delayed(const Duration(seconds: 1));
+        Get.offNamed('/home');
+        
+      } else {
         Get.snackbar(
-          'Success', 
-          'You\'ve successfully logged in!',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.withOpacity(0.8),
-          colorText: Colors.white,
-          duration: Duration(seconds: 2),
+          'Error',
+          'Username atau password salah',
+          backgroundColor: Colors.red.shade100,
+          colorText: Colors.red.shade800,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 3),
+          margin: const EdgeInsets.all(16),
+          borderRadius: 8,
         );
       }
+      
     } catch (e) {
-      // Handle errors
       Get.snackbar(
-        'Error', 
-        'Something went wrong. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
-        colorText: Colors.white,
+        'Error',
+        'Terjadi kesalahan: ${e.toString()}',
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade800,
+        snackPosition: SnackPosition.TOP,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(16),
+        borderRadius: 8,
       );
     } finally {
-      // Hide loading indicator
       isLoading.value = false;
     }
   }
   
-  // Handle create account process - modified to replace current screen with detail page
-  Future<void> createAccount() async {
-    // Always set validation to true
-    isNameValid.value = true;
-    isEmailValid.value = true;
-    isPasswordValid.value = true;
-    isConfirmPasswordValid.value = true;
-    
-    // Only check terms agreement
-    if (!agreedToTerms.value) {
-      Get.snackbar(
-        'Terms Required', 
-        'You must agree to the Terms and Conditions',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
-        colorText: Colors.white,
-      );
-      return;
-    }
-    
-    // Show loading indicator
-    isLoading.value = true;
-    
-    try {
-      // Simulate API call with a shorter delay
-      await Future.delayed(Duration(milliseconds: 500));
-      
-      // Always successful account creation
-      final HomeController homeController = Get.find<HomeController>();
-      homeController.setLoggedIn(true);
-      
-      // If coming from book detail with specific book info
-      if (returnToDetail) {
-        // Go back to detail screen
-        Get.back();
-        
-        // Show success message with book info
-        Get.snackbar(
-          'Success', 
-          'Account created! "$bookTitle" has been added to your list.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.withOpacity(0.8),
-          colorText: Colors.white,
-          duration: Duration(seconds: 2),
-        );
-      }
-      else {
-        // Replace current screen with detail page rather than navigating
-        Get.offAllNamed('/detail');
-        
-        // Show success message
-        Get.snackbar(
-          'Success', 
-          'Account created successfully! You are now logged in.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.withOpacity(0.8),
-          colorText: Colors.white,
-          duration: Duration(seconds: 2),
-        );
-      }
-    } catch (e) {
-      // Handle errors
-      Get.snackbar(
-        'Error', 
-        'Something went wrong. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
-        colorText: Colors.white,
-      );
-    } finally {
-      // Hide loading indicator
-      isLoading.value = false;
-    }
+  // Clear inputs helper function
+  void _clearInputs() {
+    usernameController.clear();
+    passwordController.clear();
+    isUsernameFocused.value = false;
+    isPasswordFocused.value = false;
   }
   
-  // Handle forgot password
+  // Forgot password function
   void forgotPassword() {
-    // For this example, we'll just show a message
-    Get.snackbar(
-      'Forgot Password', 
-      'This feature is not implemented yet.',
-      snackPosition: SnackPosition.BOTTOM,
+    Get.dialog(
+      AlertDialog(
+        title: const Text(
+          'Lupa Password',
+          style: TextStyle(
+            color: Color(0xFF2D2D2D),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: const Text(
+          'Fitur reset password akan segera tersedia. Silakan hubungi administrator untuk bantuan.',
+          style: TextStyle(color: Color(0xFF666666)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text(
+              'OK',
+              style: TextStyle(
+                color: Color(0xFF00B14F),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
     );
   }
   
-  // Handle social logins
-  void socialLogin(String provider) {
-    Get.snackbar(
-      '$provider Login', 
-      'This feature is not implemented yet.',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+  // Navigate to create account page - DIPERBAIKI
+  void goToCreateAccount() {
+    try {
+      // Clear current inputs before navigating
+      _clearInputs();
+      
+      // Debug print untuk memastikan method dipanggil
+      print('Navigating to CreateAccView...');
+      
+      // Menggunakan Get.to() sebagai alternatif jika named route bermasalah
+      Get.to(
+        () => const CreateAccView(),
+        transition: Transition.rightToLeft,
+        duration: const Duration(milliseconds: 300),
+      );
+      
+      // Optional: Show info snackbar setelah navigasi berhasil
+      Future.delayed(const Duration(milliseconds: 500), () {
+        Get.snackbar(
+          'Info',
+          'Silakan lengkapi form registrasi',
+          backgroundColor: Colors.blue.shade100,
+          colorText: Colors.blue.shade800,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 2),
+          margin: const EdgeInsets.all(16),
+          borderRadius: 8,
+        );
+      });
+      
+    } catch (e) {
+      // Fallback menggunakan named route jika Get.to() gagal
+      print('Error with Get.to(), trying named route: $e');
+      
+      try {
+        Get.toNamed('/create_acc');
+      } catch (e2) {
+        print('Error with named route: $e2');
+        
+        // Show error message jika semua metode navigasi gagal
+        Get.snackbar(
+          'Error',
+          'Tidak dapat membuka halaman registrasi. Silakan coba lagi.',
+          backgroundColor: Colors.red.shade100,
+          colorText: Colors.red.shade800,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 3),
+          margin: const EdgeInsets.all(16),
+          borderRadius: 8,
+        );
+      }
+    }
   }
 }
+

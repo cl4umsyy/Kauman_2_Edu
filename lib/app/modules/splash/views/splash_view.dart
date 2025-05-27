@@ -11,7 +11,7 @@ class SplashView extends GetView<SplashController> {
     final screenSize = MediaQuery.of(context).size;
     
     return Scaffold(
-      backgroundColor: const Color(0xFF5CE488), // Set Scaffold background color
+      backgroundColor: const Color(0xFF00B14F), // Set Scaffold background color
       body: SafeArea(
         child: Obx(() => AnimatedOpacity(
           opacity: controller.opacity.value,
@@ -19,7 +19,7 @@ class SplashView extends GetView<SplashController> {
           child: Container(
             width: double.infinity,
             height: double.infinity,
-            color: const Color(0xFF5CE488), // Green background color
+            color: const Color(0xFF00B14F), // Green background color
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -35,7 +35,7 @@ class SplashView extends GetView<SplashController> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8), // Reduced spacing
+                  const SizedBox(height: 2), // Minimal spacing between logo and title
                   // Text Kauman2 Edu - with the two-color styling
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -60,8 +60,8 @@ class SplashView extends GetView<SplashController> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 5), // Reduced spacing
-                  // Subtext
+                  // Reduced spacing between title and subtext - removed separate SizedBox
+                  // and immediately placed the subtext
                   Text(
                     'Membangun Generasi Cerdas dengan Literasi',
                     style: TextStyle(

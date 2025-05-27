@@ -21,17 +21,23 @@ class HomeView extends GetView<HomeController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 24),
-                    _buildSectionHeader('Buku Teratas!', onViewAll: () {}),
+                    _buildSectionHeader('Buku Populer!', onViewAll: () {
+                      Get.toNamed('/viewall', arguments: {'title': 'Buku Populer!'});
+                    }),
                     const SizedBox(height: 16),
                     _buildHorizontalBookList(controller.topBooks),
                     const SizedBox(height: 32),
-                    _buildSectionHeader('Buku Sekolah', onViewAll: () {}),
+                    _buildSectionHeader('Baru dirilis', onViewAll: () {
+                      Get.toNamed('/viewall', arguments: {'title': 'Buku Baru Dirilis'});
+                    }),
                     const SizedBox(height: 16),
                     _buildHorizontalBookList(controller.studyGuides),
                     const SizedBox(height: 32),
-                    _buildSectionHeader('Cerita Rakyat', onViewAll: () {}),
+                    _buildSectionHeader('Majalah Bulan Ini', onViewAll: () {
+                      Get.toNamed('/viewall', arguments: {'title': 'Majalah Bulan Ini'});
+                    }),
                     const SizedBox(height: 16),
-                    _buildHorizontalBookList(controller.ceritaRakyat),
+                    _buildHorizontalBookList(controller.monthlyMagazines),
                     const SizedBox(height: 24),
                   ],
                 ),
@@ -40,44 +46,45 @@ class HomeView extends GetView<HomeController> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
+      bottomNavigationBar: _buildCustomBottomNavBar(),
     );
   }
 
-  Widget _buildBottomNavBar() {
+  Widget _buildCustomBottomNavBar() {
     return Container(
-      height: 60,
+      height: 70,
       decoration: BoxDecoration(
-        color: Color(0xFF4CD964),
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 5,
-            offset: Offset(0, -1),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, -2),
           ),
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildNavItem(Icons.home_rounded, 0, 'Beranda', isActive: true),
-          _buildNavItem(Icons.search_rounded, 1, 'Jelajahi'),
-          _buildNavItem(Icons.menu_book_rounded, 2, 'Perpustakaan'),
-          _buildNavItem(Icons.person_rounded, 3, 'Profil'),
+          _buildNavItem('Beranda', 'assets/kucing.png', 0, isActive: true),
+          _buildNavItem('Jelajahi', 'assets/kucing.png', 1),
+          _buildNavItem('Perpustakaan', 'assets/kucing.png', 2),
+          _buildNavItem('Akun', 'assets/kucing.png', 3),
         ],
       ),
     );
   }
 
-  Widget _buildNavItem(IconData icon, int index, String label, {bool isActive = false}) {
+  Widget _buildNavItem(String label, String iconAsset, int index, {bool isActive = false}) {
+    final Color activeColor = Color(0xFF00B14F);
+    final Color inactiveColor = Colors.grey;
+    
     return InkWell(
       onTap: () {
-        // Update the controller index regardless of navigation
         controller.updateIndex(index);
         
-        // Handle navigation based on the selected index
         switch(index) {
-          case 0: // Home - already on home page, no navigation needed
+          case 0: // Home - already on home page
             break;
           case 1: // Search
             Get.toNamed('/jelajahi');
@@ -90,32 +97,49 @@ class HomeView extends GetView<HomeController> {
             break;
         }
       },
-      child: Container(
-        width: 80,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: isActive ? Colors.white : Colors.white.withOpacity(0.7),
-              size: 26,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 70,
+            height: 3,
+            color: isActive ? activeColor : Colors.transparent,
+            margin: EdgeInsets.only(bottom: 8),
+          ),
+          Icon(
+            _getIconForIndex(index),
+            color: isActive ? activeColor : inactiveColor,
+            size: 24,
+          ),
+          SizedBox(height: 5),
+          Text(
+            label,
+            style: TextStyle(
+              color: isActive ? activeColor : inactiveColor,
+              fontSize: 12,
+              fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
             ),
-            SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: isActive ? Colors.white : Colors.white.withOpacity(0.7),
-                fontSize: 12,
-                fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  // Rest of the methods remain the same
+  IconData _getIconForIndex(int index) {
+    switch (index) {
+      case 0:
+        return Icons.home_rounded;
+      case 1:
+        return Icons.search_rounded;
+      case 2:
+        return Icons.menu_book_rounded;
+      case 3:
+        return Icons.person_rounded;
+      default:
+        return Icons.home_rounded;
+    }
+  }
+
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 16.0),
@@ -136,32 +160,65 @@ class HomeView extends GetView<HomeController> {
           ),
           const SizedBox(width: 12),
           Text(
-            'Hello, Claumsyy!',
+            'Hello!',
             style: TextStyle(
-              color: Color(0xFF4CD964),
+              color: Color(0xFF00B14F),
               fontWeight: FontWeight.w500,
               fontSize: 16,
             ),
           ),
           Spacer(),
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Color(0xFF4CD964), width: 1),
+          GestureDetector(
+            onTap: () => Get.toNamed('/settings'),
+            child: Container(
+              width: 40,
+              height: 40,
+              child: Icon(Icons.settings_outlined, color: Color(0xFF00B14F), size: 30),
             ),
-            child: Icon(Icons.settings_outlined, color: Color(0xFF4CD964), size: 20),
           ),
           const SizedBox(width: 8),
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Color(0xFF4CD964), width: 1),
+          // Updated notification icon with navigation
+          GestureDetector(
+            onTap: () => Get.toNamed('/notifikasi'),
+            child: Container(
+              width: 40,
+              height: 40,
+              child: Stack(
+                children: [
+                  Center(
+                    child: Icon(
+                      Icons.notifications_outlined, 
+                      color: Color(0xFF00B14F), 
+                      size: 30
+                    ),
+                  ),
+                  // Optional: Add notification badge
+                  // Positioned(
+                  //   right: 8,
+                  //   top: 8,
+                  //   child: Container(
+                  //     padding: EdgeInsets.all(2),
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.red,
+                  //       borderRadius: BorderRadius.circular(6),
+                  //     ),
+                  //     constraints: BoxConstraints(
+                  //       minWidth: 12,
+                  //       minHeight: 12,
+                  //     ),
+                  //     child: Text(
+                  //       '3', // Replace with actual unread count
+                  //       style: TextStyle(
+                  //         color: Colors.white,
+                  //         fontSize: 8,
+                  //       ),
+                  //       textAlign: TextAlign.center,
+                  //     ),
+                  //   ),
+                  // ),
+                ],
+              ),
             ),
-            child: Icon(Icons.notifications_outlined, color: Color(0xFF4CD964), size: 20),
           ),
         ],
       ),
@@ -174,7 +231,7 @@ class HomeView extends GetView<HomeController> {
       child: Container(
         height: 48,
         decoration: BoxDecoration(
-          border: Border.all(color: Color(0xFF4CD964), width: 1.5),
+          border: Border.all(color: Color(0xFF00B14F), width: 1.5),
           borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
@@ -214,7 +271,7 @@ class HomeView extends GetView<HomeController> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: Color(0xFF4CD964),
+              color: Colors.black87,
             ),
           ),
           TextButton(
@@ -228,7 +285,7 @@ class HomeView extends GetView<HomeController> {
               'View all',
               style: TextStyle(
                 fontSize: 14,
-                color: Color(0xFF4CD964).withOpacity(0.8),
+                color: Color(0xFF00B14F).withOpacity(0.8),
               ),
             ),
           ),
@@ -254,7 +311,11 @@ class HomeView extends GetView<HomeController> {
   Widget _buildBookCard(Map<String, String> book) {
     return GestureDetector(
       onTap: () {
-        Get.toNamed('/login');
+        Get.toNamed('/detail', arguments: {
+          'title': book['title'] ?? 'Unknown Title',
+          'author': book['author'] ?? 'Unknown Author',
+          'coverImage': book['coverImage'] ?? 'assets/kucing.png',
+        });
       },
       child: Container(
         width: 130,

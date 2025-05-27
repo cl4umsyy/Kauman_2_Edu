@@ -2,267 +2,349 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/login_controller.dart';
 
-class LoginView extends GetView<LoginController> {
+class LoginView extends StatelessWidget {
   const LoginView({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
+    final LoginController controller = Get.put(LoginController());
+
     return Scaffold(
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Obx(() => Column(
-              children: [
-                // Green curved container with logo
-                Container(
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height * 0.25,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF7EE293), // Light green color
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(200),
-                      bottomRight: Radius.circular(200),
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Book and person logo
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF7EE293),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: Image.asset(
-                            'assets/Vector3.png',
-                            width: 100,
-                            height: 100,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 50),
+              
+              // Logo Section
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF00B14F),
+                      Color(0xFF00D15A),
                     ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xFF00B14F).withOpacity(0.3),
+                      blurRadius: 20,
+                      offset: Offset(0, 8),
+                      spreadRadius: 0,
+                    ),
+                  ],
                 ),
-                
-                const SizedBox(height: 30),
-                
-                // Title text (changes based on page mode)
-                Text(
-                  controller.isLoginPage.value ? 'Welcome Back!' : 'Create Account',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF4D4D4D),
-                  ),
+                child: Icon(
+                  Icons.school_rounded,
+                  size: 45,
+                  color: Colors.white,
                 ),
-                
-                const SizedBox(height: 20),
-                
-                // CONDITIONAL FIELDS BASED ON PAGE MODE
-                
-                // Name field (only for create account)
-                if (!controller.isLoginPage.value)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                    child: TextField(
-                      controller: controller.nameController,
-                      decoration: InputDecoration(
-                        labelText: 'Full Name',
-                        hintText: 'Enter your full name',
-                        errorText: controller.isNameValid.value ? null : 'Name is required',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          borderSide: BorderSide(color: Color(0xFF7EE293)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          borderSide: BorderSide(color: Color(0xFF7EE293), width: 2),
-                        ),
-                        prefixIcon: Icon(Icons.person, color: Color(0xFF7EE293)),
+              ),
+              
+              const SizedBox(height: 24),
+              
+              // Brand Name
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Kauman ',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF2D2D2D),
                       ),
                     ),
-                  ),
-                
-                // Email field (common for both)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                  child: TextField(
-                    controller: controller.emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      hintText: 'Enter your email',
-                      errorText: controller.isEmailValid.value ? null : 'Please enter a valid email',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide(color: Color(0xFF7EE293)),
+                    TextSpan(
+                      text: 'Edu',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF00B14F),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide(color: Color(0xFF7EE293), width: 2),
-                      ),
-                      prefixIcon: Icon(Icons.email, color: Color(0xFF7EE293)),
                     ),
-                  ),
+                  ],
                 ),
-                
-                // Password field (common for both)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                  child: TextField(
-                    controller: controller.passwordController,
-                    obscureText: !controller.showPassword.value,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      hintText: 'Enter your password',
-                      errorText: controller.isPasswordValid.value ? null : 'Password must be at least 6 characters',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide(color: Color(0xFF7EE293)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide(color: Color(0xFF7EE293), width: 2),
-                      ),
-                      prefixIcon: Icon(Icons.lock, color: Color(0xFF7EE293)),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          controller.showPassword.value ? Icons.visibility_off : Icons.visibility,
-                          color: Color(0xFF7EE293),
-                        ),
-                        onPressed: controller.togglePasswordVisibility,
-                      ),
-                    ),
-                  ),
+              ),
+              
+              const SizedBox(height: 8),
+              
+              Text(
+                'Selamat datang kembali!',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey.shade600,
+                  fontWeight: FontWeight.w400,
                 ),
-                
-                // Confirm Password field (only for create account)
-                if (!controller.isLoginPage.value)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                    child: TextField(
-                      controller: controller.confirmPasswordController,
-                      obscureText: !controller.showConfirmPassword.value,
-                      decoration: InputDecoration(
-                        labelText: 'Confirm Password',
-                        hintText: 'Confirm your password',
-                        errorText: controller.isConfirmPasswordValid.value ? null : 'Passwords do not match',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          borderSide: BorderSide(color: Color(0xFF7EE293)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          borderSide: BorderSide(color: Color(0xFF7EE293), width: 2),
-                        ),
-                        prefixIcon: Icon(Icons.lock_outline, color: Color(0xFF7EE293)),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            controller.showConfirmPassword.value ? Icons.visibility_off : Icons.visibility,
-                            color: Color(0xFF7EE293),
-                          ),
-                          onPressed: controller.toggleConfirmPasswordVisibility,
-                        ),
-                      ),
+              ),
+              
+              const SizedBox(height: 48),
+              
+              // Login Form Container
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(28.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 30,
+                      offset: Offset(0, 10),
+                      spreadRadius: 0,
                     ),
-                  ),
-                
-                // Terms and Conditions checkbox (only for create account)
-                if (!controller.isLoginPage.value)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 5),
-                    child: Row(
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 15,
+                      offset: Offset(0, 4),
+                      spreadRadius: 0,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Username Field
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Checkbox(
-                          value: controller.agreedToTerms.value,
-                          onChanged: (_) => controller.toggleTermsAgreement(),
-                          activeColor: Color(0xFF7EE293),
+                        Text(
+                          'Username',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF2D2D2D),
+                          ),
                         ),
-                        Expanded(
-                          child: Text(
-                            'I agree to the Terms and Conditions',
-                            style: TextStyle(
-                              color: Color(0xFF4D4D4D),
-                              fontSize: 12,
+                        const SizedBox(height: 12),
+                        Obx(() => Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: controller.isUsernameFocused.value
+                                ? [
+                                    BoxShadow(
+                                      color: Color(0xFF00B14F).withOpacity(0.1),
+                                      blurRadius: 12,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ]
+                                : [],
+                          ),
+                          child: TextField(
+                            controller: controller.usernameController,
+                            onTap: () => controller.setUsernameFocus(true),
+                            onTapOutside: (_) => controller.setUsernameFocus(false),
+                            decoration: InputDecoration(
+                              hintText: 'Masukkan username Anda',
+                              hintStyle: TextStyle(color: Colors.grey.shade400),
+                              prefixIcon: Icon(
+                                Icons.person_outline_rounded,
+                                color: controller.isUsernameFocused.value
+                                    ? Color(0xFF00B14F)
+                                    : Colors.grey.shade400,
+                                size: 22,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14),
+                                borderSide: BorderSide(color: Colors.grey.shade300),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14),
+                                borderSide: BorderSide(color: Colors.grey.shade300),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14),
+                                borderSide: BorderSide(color: Color(0xFF00B14F), width: 2),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                              filled: true,
+                              fillColor: controller.isUsernameFocused.value
+                                  ? Color(0xFF00B14F).withOpacity(0.05)
+                                  : Colors.grey.shade50,
                             ),
                           ),
-                        ),
+                        )),
                       ],
                     ),
-                  ),
-
-                const SizedBox(height: 20),
-                
-                // Primary action button (Login or Create Account)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: controller.isLoading.value 
-                        ? null 
-                        : (controller.isLoginPage.value 
-                            ? () => controller.login() 
-                            : () => controller.createAccount()),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF7EE293),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Password Field
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Password',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF2D2D2D),
+                          ),
                         ),
-                      ),
-                      child: controller.isLoading.value
-                          ? CircularProgressIndicator(color: Colors.white)
-                          : Text(
-                              controller.isLoginPage.value ? 'Login' : 'Create Account',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
+                        const SizedBox(height: 12),
+                        Obx(() => Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: controller.isPasswordFocused.value
+                                ? [
+                                    BoxShadow(
+                                      color: Color(0xFF00B14F).withOpacity(0.1),
+                                      blurRadius: 12,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ]
+                                : [],
+                          ),
+                          child: TextField(
+                            controller: controller.passwordController,
+                            onTap: () => controller.setPasswordFocus(true),
+                            onTapOutside: (_) => controller.setPasswordFocus(false),
+                            obscureText: controller.isPasswordHidden.value,
+                            decoration: InputDecoration(
+                              hintText: 'Masukkan password Anda',
+                              hintStyle: TextStyle(color: Colors.grey.shade400),
+                              prefixIcon: Icon(
+                                Icons.lock_outline_rounded,
+                                color: controller.isPasswordFocused.value
+                                    ? Color(0xFF00B14F)
+                                    : Colors.grey.shade400,
+                                size: 22,
                               ),
+                              suffixIcon: IconButton(
+                                onPressed: controller.togglePasswordVisibility,
+                                icon: Icon(
+                                  controller.isPasswordHidden.value
+                                      ? Icons.visibility_off_outlined
+                                      : Icons.visibility_outlined,
+                                  color: Colors.grey.shade400,
+                                  size: 22,
+                                ),
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14),
+                                borderSide: BorderSide(color: Colors.grey.shade300),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14),
+                                borderSide: BorderSide(color: Colors.grey.shade300),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14),
+                                borderSide: BorderSide(color: Color(0xFF00B14F), width: 2),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                              filled: true,
+                              fillColor: controller.isPasswordFocused.value
+                                  ? Color(0xFF00B14F).withOpacity(0.05)
+                                  : Colors.grey.shade50,
                             ),
+                          ),
+                        )),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 20),
+                    // Login Button
+                    Obx(() => Container(
+                      height: 56,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(14),
+                        gradient: LinearGradient(
+                          colors: [
+                            Color(0xFF00B14F),
+                            Color(0xFF00D15A),
+                          ],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFF00B14F).withOpacity(0.4),
+                            blurRadius: 15,
+                            offset: Offset(0, 6),
+                            spreadRadius: 0,
+                          ),
+                        ],
+                      ),
+                      child: ElevatedButton(
+                        onPressed: controller.isLoading.value ? null : controller.login,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: Colors.white,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: controller.isLoading.value
+                            ? SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              )
+                            : Text(
+                                'Masuk',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                      ),
+                    )),
+                  ],
+                ),
+              ),
+              
+              const SizedBox(height: 40),
+              
+              // Sign Up Link
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Belum punya akun? ",
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
-                ),
-                
-                const SizedBox(height: 15),
-                
-                // Secondary action button (Switch between Login and Create Account)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: OutlinedButton(
-                      onPressed: () => controller.togglePage(),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFF7EE293)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                      ),
-                      child: Text(
-                        controller.isLoginPage.value ? 'Create New Account' : 'Back to Login',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Color(0xFF7EE293),
-                          fontWeight: FontWeight.w500,
-                        ),
+                  TextButton(
+                    onPressed: controller.goToCreateAccount,
+                    style: TextButton.styleFrom(
+                      minimumSize: Size.zero,
+                      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: Text(
+                      'Daftar Sekarang',
+                      style: TextStyle(
+                        color: Color(0xFF00B14F),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-                ),
-                
-                // Bottom padding
-                const SizedBox(height: 30),
-              ],
-            )),
+                ],
+              ),
+              
+              const SizedBox(height: 20),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
